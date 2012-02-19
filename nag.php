@@ -1,7 +1,6 @@
 <?php
 // nag.php by Will Bradley, www.zyphon.com/arduino-nagios
 // Script to parse Nagios status.dat and present it in simplified HTML.
-// usage: nag.php for human view, nag.php?minimal=1 for computer view.
 // 
 // Based on statusXML.php by Jason Antman
 //
@@ -29,13 +28,11 @@
 // +----------------------------------------------------------------------+
 // | Authors: Jason Antman <jason@jasonantman.com>                        |
 // +----------------------------------------------------------------------+
-//      $Id: nag.php,v 1.0 2011/12/11 03:76:14 wbradley Exp $
-//      $Source: ArduinoNagiosDisplay/nag.php,v $
+//      $Id: statusXML.php,v 1.6 2009/02/07 03:32:14 jantman Exp $
+//      $Source: /usr/local/cvsroot/admin-portal/nagios/statusXML.php,v $
 
-// change the statusFile to the location of status.dat on your Nagios system
+
 $statusFile = "/var/cache/nagios3/status.dat";
-
-// ------------- end config
 
 $nag_version = getFileVersion($statusFile); // returns integer 2 or 3
 $created_ts = 0;
@@ -71,12 +68,12 @@ $ret = "";
     // begin outputting XML
     //header("Content-type: text/xml");
     if($minimal){ 
-        $ret .= "$";
+        $ret .= "^";
     }
     else {
     	$ret .= "<html>"."\n";
-    	$ret .= '<head><style type="text/css">body {font:15px arial,sans-serif; } dt { font-weight: bold; float: left; margin-right: 1em; }</style></head>'."\n";
-    	$ret .= "<body>"."\n";
+    	$ret .= '<head><style type="text/css">body { background-color: #fff; font:15px arial,sans-serif; } table {margin: 10px auto; } th { width: 400px; text-align: left; } .OK { background-color: green; } .WARNING { background-color: yellow; } .CRITICAL { background-color: red; } .perf { color: #666; font-size: 0.7em; padding-left: 50px; } </style></head>'."\n";
+    	$ret .= "<body>"."<table>\n";
     }
     // program status
 /*
@@ -99,8 +96,24 @@ $ret = "";
 	  $ret .= $hostArray['current_state'];
 	}
 	else {
-	  $ret .= "<dt>".$hostArray['host_name']."</dt>";
-	  $ret .= "<dd>".$hostArray['current_state']."</dd>";
+	  $ret .= "<tr>";
+	  $ret .= "<th>".$hostArray['host_name']."</th>";
+	  switch($hostArray['current_state']) {
+	    case 0:
+	      $hoststate = "OK";
+	      break;
+	    case 1:
+	      $hoststate = "WARNING";
+	      break;
+	    case 2:
+	      $hoststate = "CRITICAL";
+	      break;
+	  }
+	  $ret .= "<td class='".$hoststate."'>";
+	  $ret .= $hoststate;
+	  $ret .= "</td>";
+	  $ret .= "<td class='perf'>".$hostArray['plugin_output']."</td>";
+	  $ret .= "</tr>";
 	}
 /*
 	$current_state = $hostArray['current_state'];
@@ -124,14 +137,33 @@ $ret = "";
 	      $ret .= $serviceArray['current_state'];
 	    }
 	    else {
-	      $ret .= "<dt>".$serviceArray['host_name']." ".$serviceArray['service_description']."</dt>";
-	      $ret .= "<dd>".$serviceArray['current_state']."</dd>";
+  	      $ret .= "<tr>";
+	      $ret .= "<th>".$serviceArray['host_name']." ".$serviceArray['service_description']."</th>";
+              switch($serviceArray['current_state']) {
+                case 0:
+                  $servstate = "OK";
+                  break;
+                case 1:
+                  $servstate = "WARNING";
+                  break;
+                case 2:
+                  $servstate = "CRITICAL";
+                  break;
+              }
+              $ret .= "<td class='".$servstate."'>";
+              $ret .= $servstate;
+	      $ret .= "</td>";
+	      $ret .= "<td class='perf'>".$serviceArray['plugin_output']."</td>";
+	      $ret .= "</tr>";
 	    }
 	  }
       }
 
-if(!$minimal){
-	$ret .= "</body></html>";
+if($minimal){
+	$ret .= "$";
+}
+else{
+	$ret .= "</table></body></html>";
 }
 return $ret;
 }
