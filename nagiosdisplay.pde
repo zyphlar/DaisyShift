@@ -15,6 +15,7 @@
 // Variables you should change based on preferences
 int updateFrequency = 30; // in seconds
 int numrows = 2; // number of shift registers in the daisy chain
+char* queryURL = "/nag.php?minimal=1";  // path on the webserver
 
 // Enter a MAC address and IP address info for your Arduino below.
 // These values will change based on your network.
@@ -153,7 +154,9 @@ void loop() {
     if (client.connect()) {
       Serial.println("connected");
       // Make a HTTP request:
-      client.println("GET /nag.php?minimal=1 HTTP/1.0");
+      client.print("GET ");
+      client.print(queryURL);
+      client.println(" HTTP/1.0");
       client.println();
       
     } 
