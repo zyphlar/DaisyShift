@@ -12,7 +12,11 @@
 DaisyShift - Daisy Chain Shift Register display using Arduino Ethernet
 by Will Bradley, www.zyphon.com/daisyshift - twitter @willbradley
 
-For creating an Ethernet-enabled, daisy chainable LED matrix that displays information from a webservice on the LEDs. Each "row" has 8 LEDs, and you can stack as many rows as you like.
+If you've just got one of these boards and want to get started, check out the example code here: http://arduino.cc/en/Tutorial/ShftOut11 and here: http://arduino.cc/en/Tutorial/ShiftOut -- just replace the pin numbers 8, 11, and 12 in the code with pins 5,6, and 7 respectively.
+
+I highly recommend starting with and playing around with the Arduino Blink example first so that you know how to run the Arduino software, edit the code, etc.
+
+This code is ultimately for creating an Ethernet-enabled, daisy chainable LED matrix that displays information from a webservice on the LEDs. Each "row" has 8 LEDs, and you can stack as many rows as you like.
 Intentionally kept hackable, with lots of commented-out sections and debugging information available, because everyone's environment is slightly different.
 
 Included in distribution:
